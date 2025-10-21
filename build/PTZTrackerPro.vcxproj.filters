@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\Jorge\Documents\PTZTrackerPro_YOLO\build\PTZTrackerPro_autogen\mocs_compilation_Debug.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Jorge\Documents\PTZTrackerPro_YOLO\src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Jorge\Documents\PTZTrackerPro_YOLO\src\MainWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Jorge\Documents\PTZTrackerPro_YOLO\src\VideoWidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Jorge\Documents\PTZTrackerPro_YOLO\src\PTZPanel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Jorge\Documents\PTZTrackerPro_YOLO\src\LogPanel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Jorge\Documents\PTZTrackerPro_YOLO\src\CaptureEngine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Jorge\Documents\PTZTrackerPro_YOLO\src\PTZController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Jorge\Documents\PTZTrackerPro_YOLO\src\YOLODetector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Jorge\Documents\PTZTrackerPro_YOLO\build\PTZTrackerPro_autogen\mocs_compilation_Release.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Jorge\Documents\PTZTrackerPro_YOLO\build\PTZTrackerPro_autogen\mocs_compilation_MinSizeRel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Jorge\Documents\PTZTrackerPro_YOLO\build\PTZTrackerPro_autogen\mocs_compilation_RelWithDebInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Jorge\Documents\PTZTrackerPro_YOLO\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{732C3B03-63A0-305A-8FE3-886E18CC4429}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

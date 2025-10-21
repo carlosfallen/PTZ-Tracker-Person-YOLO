@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Jorge\Documents\PTZTrackerPro_YOLO\build\CMakeFiles\8c88ff0f0c05a5e3ff700d75a27e500e\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{6AA3D70F-FEE4-3983-9CE8-E8BD68DB2CA6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
