@@ -106,3 +106,4 @@ PTZTrackerPro.exe
 
 MIT License - Use livremente!
 "# PTZ-Tracker-Person-YOLO" 
+"# PTZ-Tracker-Person-YOLO" 
