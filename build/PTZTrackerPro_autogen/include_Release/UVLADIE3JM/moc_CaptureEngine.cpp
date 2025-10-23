@@ -45,7 +45,10 @@ template <> constexpr inline auto CaptureEngine::qt_create_metaobjectdata<qt_met
         "fpsUpdated",
         "fps",
         "detectionCount",
-        "count"
+        "count",
+        "trackingCommand",
+        "pan",
+        "tilt"
     };
 
     QtMocHelpers::UintData qt_methods {
@@ -60,6 +63,10 @@ template <> constexpr inline auto CaptureEngine::qt_create_metaobjectdata<qt_met
         // Signal 'detectionCount'
         QtMocHelpers::SignalData<void(int)>(6, 2, QMC::AccessPublic, QMetaType::Void, {{
             { QMetaType::Int, 7 },
+        }}),
+        // Signal 'trackingCommand'
+        QtMocHelpers::SignalData<void(int, int)>(8, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::Int, 9 }, { QMetaType::Int, 10 },
         }}),
     };
     QtMocHelpers::UintData qt_properties {
@@ -87,6 +94,7 @@ void CaptureEngine::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _i
         case 0: _t->frameReady((*reinterpret_cast< std::add_pointer_t<QImage>>(_a[1]))); break;
         case 1: _t->fpsUpdated((*reinterpret_cast< std::add_pointer_t<double>>(_a[1]))); break;
         case 2: _t->detectionCount((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
+        case 3: _t->trackingCommand((*reinterpret_cast< std::add_pointer_t<int>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2]))); break;
         default: ;
         }
     }
@@ -96,6 +104,8 @@ void CaptureEngine::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _i
         if (QtMocHelpers::indexOfMethod<void (CaptureEngine::*)(double )>(_a, &CaptureEngine::fpsUpdated, 1))
             return;
         if (QtMocHelpers::indexOfMethod<void (CaptureEngine::*)(int )>(_a, &CaptureEngine::detectionCount, 2))
+            return;
+        if (QtMocHelpers::indexOfMethod<void (CaptureEngine::*)(int , int )>(_a, &CaptureEngine::trackingCommand, 3))
             return;
     }
 }
@@ -119,14 +129,14 @@ int CaptureEngine::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 3)
+        if (_id < 4)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 3;
+        _id -= 4;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 3)
+        if (_id < 4)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 3;
+        _id -= 4;
     }
     return _id;
 }
@@ -147,5 +157,11 @@ void CaptureEngine::fpsUpdated(double _t1)
 void CaptureEngine::detectionCount(int _t1)
 {
     QMetaObject::activate<void>(this, &staticMetaObject, 2, nullptr, _t1);
+}
+
+// SIGNAL 3
+void CaptureEngine::trackingCommand(int _t1, int _t2)
+{
+    QMetaObject::activate<void>(this, &staticMetaObject, 3, nullptr, _t1, _t2);
 }
 QT_WARNING_POP
