@@ -40,8 +40,10 @@ template <> constexpr inline auto MainWindow::qt_create_metaobjectdata<qt_meta_t
     namespace QMC = QtMocConstants;
     QtMocHelpers::StringRefStorage qt_stringData {
         "MainWindow",
-        "onStartClicked",
+        "trackingLog",
         "",
+        "message",
+        "onStartClicked",
         "onStopClicked",
         "onFrameReady",
         "frame",
@@ -58,33 +60,37 @@ template <> constexpr inline auto MainWindow::qt_create_metaobjectdata<qt_meta_t
     };
 
     QtMocHelpers::UintData qt_methods {
+        // Signal 'trackingLog'
+        QtMocHelpers::SignalData<void(QString)>(1, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::QString, 3 },
+        }}),
         // Slot 'onStartClicked'
-        QtMocHelpers::SlotData<void()>(1, 2, QMC::AccessPrivate, QMetaType::Void),
+        QtMocHelpers::SlotData<void()>(4, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'onStopClicked'
-        QtMocHelpers::SlotData<void()>(3, 2, QMC::AccessPrivate, QMetaType::Void),
+        QtMocHelpers::SlotData<void()>(5, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'onFrameReady'
-        QtMocHelpers::SlotData<void(const QImage &)>(4, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { QMetaType::QImage, 5 },
+        QtMocHelpers::SlotData<void(const QImage &)>(6, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::QImage, 7 },
         }}),
         // Slot 'onFPSUpdate'
-        QtMocHelpers::SlotData<void(double)>(6, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { QMetaType::Double, 7 },
+        QtMocHelpers::SlotData<void(double)>(8, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::Double, 9 },
         }}),
         // Slot 'onDetectionCount'
-        QtMocHelpers::SlotData<void(int)>(8, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { QMetaType::Int, 9 },
-        }}),
-        // Slot 'onSourceTypeChanged'
         QtMocHelpers::SlotData<void(int)>(10, 2, QMC::AccessPrivate, QMetaType::Void, {{
             { QMetaType::Int, 11 },
         }}),
+        // Slot 'onSourceTypeChanged'
+        QtMocHelpers::SlotData<void(int)>(12, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::Int, 13 },
+        }}),
         // Slot 'onBrowseClicked'
-        QtMocHelpers::SlotData<void()>(12, 2, QMC::AccessPrivate, QMetaType::Void),
+        QtMocHelpers::SlotData<void()>(14, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'populateCameras'
-        QtMocHelpers::SlotData<void()>(13, 2, QMC::AccessPrivate, QMetaType::Void),
+        QtMocHelpers::SlotData<void()>(15, 2, QMC::AccessPrivate, QMetaType::Void),
         // Slot 'onAutoTrackToggled'
-        QtMocHelpers::SlotData<void(bool)>(14, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { QMetaType::Bool, 15 },
+        QtMocHelpers::SlotData<void(bool)>(16, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::Bool, 17 },
         }}),
     };
     QtMocHelpers::UintData qt_properties {
@@ -109,17 +115,22 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
     auto *_t = static_cast<MainWindow *>(_o);
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
-        case 0: _t->onStartClicked(); break;
-        case 1: _t->onStopClicked(); break;
-        case 2: _t->onFrameReady((*reinterpret_cast< std::add_pointer_t<QImage>>(_a[1]))); break;
-        case 3: _t->onFPSUpdate((*reinterpret_cast< std::add_pointer_t<double>>(_a[1]))); break;
-        case 4: _t->onDetectionCount((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
-        case 5: _t->onSourceTypeChanged((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
-        case 6: _t->onBrowseClicked(); break;
-        case 7: _t->populateCameras(); break;
-        case 8: _t->onAutoTrackToggled((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
+        case 0: _t->trackingLog((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
+        case 1: _t->onStartClicked(); break;
+        case 2: _t->onStopClicked(); break;
+        case 3: _t->onFrameReady((*reinterpret_cast< std::add_pointer_t<QImage>>(_a[1]))); break;
+        case 4: _t->onFPSUpdate((*reinterpret_cast< std::add_pointer_t<double>>(_a[1]))); break;
+        case 5: _t->onDetectionCount((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
+        case 6: _t->onSourceTypeChanged((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
+        case 7: _t->onBrowseClicked(); break;
+        case 8: _t->populateCameras(); break;
+        case 9: _t->onAutoTrackToggled((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
         default: ;
         }
+    }
+    if (_c == QMetaObject::IndexOfMethod) {
+        if (QtMocHelpers::indexOfMethod<void (MainWindow::*)(QString )>(_a, &MainWindow::trackingLog, 0))
+            return;
     }
 }
 
@@ -142,15 +153,21 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 9)
+        if (_id < 10)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 9;
+        _id -= 10;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 9)
+        if (_id < 10)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 9;
+        _id -= 10;
     }
     return _id;
+}
+
+// SIGNAL 0
+void MainWindow::trackingLog(QString _t1)
+{
+    QMetaObject::activate<void>(this, &staticMetaObject, 0, nullptr, _t1);
 }
 QT_WARNING_POP
