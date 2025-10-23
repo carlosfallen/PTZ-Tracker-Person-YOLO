@@ -36,15 +36,15 @@ void PTZController::panTilt(int pan, int tilt) {
     unsigned char tiltDir = (tilt > 0) ? 0x01 : (tilt < 0) ? 0x02 : 0x03;
     
     QByteArray cmd;
-    cmd.append(0x81);
-    cmd.append(0x01);
-    cmd.append(0x06);
-    cmd.append(0x01);
-    cmd.append(panSpd);
-    cmd.append(tiltSpd);
-    cmd.append(panDir);
-    cmd.append(tiltDir);
-    cmd.append(0xFF);
+    cmd.append((char)0x81);
+    cmd.append((char)0x01);
+    cmd.append((char)0x06);
+    cmd.append((char)0x01);
+    cmd.append((char)panSpd);
+    cmd.append((char)tiltSpd);
+    cmd.append((char)panDir);
+    cmd.append((char)tiltDir);
+    cmd.append((char)0xFF);
     
     sendCommand(cmd);
 }
@@ -54,20 +54,20 @@ void PTZController::zoom(int speed) {
     
     unsigned char spd = std::min(std::abs(speed), 7);
     QByteArray cmd;
-    cmd.append(0x81);
-    cmd.append(0x01);
-    cmd.append(0x04);
-    cmd.append(0x07);
+    cmd.append((char)0x81);
+    cmd.append((char)0x01);
+    cmd.append((char)0x04);
+    cmd.append((char)0x07);
     
     if (speed > 0) {
-        cmd.append(0x20 + spd);
+        cmd.append((char)(0x20 + spd));
     } else if (speed < 0) {
-        cmd.append(0x30 + spd);
+        cmd.append((char)(0x30 + spd));
     } else {
-        cmd.append(0x00);
+        cmd.append((char)0x00);
     }
     
-    cmd.append(0xFF);
+    cmd.append((char)0xFF);
     sendCommand(cmd);
 }
 
@@ -75,11 +75,11 @@ void PTZController::home() {
     if (!connected) return;
     
     QByteArray cmd;
-    cmd.append(0x81);
-    cmd.append(0x01);
-    cmd.append(0x06);
-    cmd.append(0x04);
-    cmd.append(0xFF);
+    cmd.append((char)0x81);
+    cmd.append((char)0x01);
+    cmd.append((char)0x06);
+    cmd.append((char)0x04);
+    cmd.append((char)0xFF);
     
     sendCommand(cmd);
     emit commandSent("Retornando para HOME");
@@ -89,15 +89,15 @@ void PTZController::stop() {
     if (!connected) return;
     
     QByteArray cmd;
-    cmd.append(0x81);
-    cmd.append(0x01);
-    cmd.append(0x06);
-    cmd.append(0x01);
-    cmd.append(0x00);
-    cmd.append(0x00);
-    cmd.append(0x03);
-    cmd.append(0x03);
-    cmd.append(0xFF);
+    cmd.append((char)0x81);
+    cmd.append((char)0x01);
+    cmd.append((char)0x06);
+    cmd.append((char)0x01);
+    cmd.append((char)0x00);
+    cmd.append((char)0x00);
+    cmd.append((char)0x03);
+    cmd.append((char)0x03);
+    cmd.append((char)0xFF);
     
     sendCommand(cmd);
 }
@@ -105,14 +105,13 @@ void PTZController::stop() {
 void PTZController::openMenu() {
     if (!connected) return;
     
-    // Comando VISCA para abrir menu OSD
     QByteArray cmd;
-    cmd.append(0x81);
-    cmd.append(0x01);
-    cmd.append(0x06);
-    cmd.append(0x06);
-    cmd.append(0x02);
-    cmd.append(0xFF);
+    cmd.append((char)0x81);
+    cmd.append((char)0x01);
+    cmd.append((char)0x06);
+    cmd.append((char)0x06);
+    cmd.append((char)0x02);
+    cmd.append((char)0xFF);
     
     sendCommand(cmd);
     emit commandSent("Abrindo menu VISCA...");
@@ -122,7 +121,7 @@ void PTZController::sendCommand(const QByteArray &cmd) {
     if (serial && serial->isOpen()) {
         serial->write(cmd);
         serial->flush();
-        QThread::msleep(50); // Pequeno delay entre comandos
+        QThread::msleep(50);
         
         emit commandSent(commandToString(cmd));
     }

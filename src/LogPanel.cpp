@@ -3,6 +3,7 @@
 #include <QHBoxLayout>
 #include <QDateTime>
 #include <QScrollBar>
+#include <QLabel>
 
 LogPanel::LogPanel(QWidget *parent) : QWidget(parent), logCount(0) {
     QVBoxLayout *layout = new QVBoxLayout(this);
