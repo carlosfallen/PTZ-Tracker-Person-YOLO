@@ -19,11 +19,13 @@ public:
     void start();
     void stop();
     void setConfidenceThreshold(float threshold);
+    void setAutoTracking(bool enabled);
 
 signals:
     void frameReady(const QImage& frame);
     void fpsUpdated(double fps);
     void detectionCount(int count);
+    void ptzAdjustmentNeeded(int pan, int tilt);
 
 private:
     void captureLoop();
@@ -34,6 +36,7 @@ private:
     int targetFPS;
     float confThreshold;
     std::atomic<bool> running;
+    std::atomic<bool> autoTracking;
     QThread* captureThread;
     std::unique_ptr<YOLODetector> detector;
 };

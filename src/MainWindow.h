@@ -7,6 +7,7 @@
 #include <QPushButton>
 #include <QSpinBox>
 #include <QDoubleSpinBox>
+#include <QCheckBox>
 #include <QLabel>
 #include <memory>
 
@@ -45,6 +46,7 @@ private:
     QComboBox *comPortCombo;
     QSpinBox *fpsSpinBox;
     QDoubleSpinBox *thresholdSpinBox;
+    QCheckBox *autoTrackCheckbox;
     
     QPushButton *startButton;
     QPushButton *stopButton;

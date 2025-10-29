@@ -2,7 +2,7 @@
 #include <QThread>
 
 PTZController::PTZController(const std::string &port, int baudrate)
-    : connected(false)
+    : connected(false), lastPanSpeed(0), lastTiltSpeed(0), lastZoomSpeed(0)
 {
     serial = std::make_unique<QSerialPort>();
     serial->setPortName(QString::fromStdString(port));
@@ -12,7 +12,7 @@ PTZController::PTZController(const std::string &port, int baudrate)
     serial->setStopBits(QSerialPort::OneStop);
     serial->setFlowControl(QSerialPort::NoFlowControl);
     
-    if (serial->open(QIODevice::WriteOnly)) {
+    if (serial->open(QIODevice::ReadWrite)) {
         connected = true;
         emit commandSent("PTZ conectado em " + QString::fromStdString(port));
     } else {
@@ -29,6 +29,11 @@ PTZController::~PTZController() {
 
 void PTZController::panTilt(int pan, int tilt) {
     if (!connected) return;
+    
+    if (pan == lastPanSpeed && tilt == lastTiltSpeed) return;
+    
+    lastPanSpeed = pan;
+    lastTiltSpeed = tilt;
     
     unsigned char panSpd = std::min(std::abs(pan), 24);
     unsigned char tiltSpd = std::min(std::abs(tilt), 20);
@@ -52,7 +57,9 @@ void PTZController::panTilt(int pan, int tilt) {
 void PTZController::zoom(int speed) {
     if (!connected) return;
     
-    unsigned char spd = std::min(std::abs(speed), 7);
+    if (speed == lastZoomSpeed) return;
+    lastZoomSpeed = speed;
+    
     QByteArray cmd;
     cmd.append((char)0x81);
     cmd.append((char)0x01);
@@ -60,9 +67,11 @@ void PTZController::zoom(int speed) {
     cmd.append((char)0x07);
     
     if (speed > 0) {
-        cmd.append((char)(0x20 + spd));
+        unsigned char spd = std::min(std::abs(speed), 7);
+        cmd.append((char)(0x20 | spd));
     } else if (speed < 0) {
-        cmd.append((char)(0x30 + spd));
+        unsigned char spd = std::min(std::abs(speed), 7);
+        cmd.append((char)(0x30 | spd));
     } else {
         cmd.append((char)0x00);
     }
@@ -87,6 +96,10 @@ void PTZController::home() {
 
 void PTZController::stop() {
     if (!connected) return;
+    
+    lastPanSpeed = 0;
+    lastTiltSpeed = 0;
+    lastZoomSpeed = 0;
     
     QByteArray cmd;
     cmd.append((char)0x81);
@@ -121,7 +134,9 @@ void PTZController::sendCommand(const QByteArray &cmd) {
     if (serial && serial->isOpen()) {
         serial->write(cmd);
         serial->flush();
-        QThread::msleep(50);
+        serial->waitForBytesWritten(50);
+        
+        QThread::msleep(30);
         
         emit commandSent(commandToString(cmd));
     }

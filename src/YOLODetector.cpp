@@ -42,50 +42,36 @@ std::vector<Detection> YOLODetector::parseDetections(
     std::vector<float> confidences;
     std::vector<int> classIds;
     
-    // YOLOv8 output format: [1, 84, 8400]
-    // 84 = 4 (bbox) + 80 (classes)
+    float x_factor = frameSize.width / 416.0f;
+    float y_factor = frameSize.height / 416.0f;
+    
     for (const auto& output : outputs) {
         float* data = (float*)output.data;
         
-        // Transpor: [1, 84, 8400] -> [8400, 84]
-        int dimensions = output.size[2]; // 84
-        int rows = output.size[1];       // 8400
+        int dimensions = output.size[1];
+        int rows = output.size[2];
         
-        cv::Mat transposed(rows, dimensions, CV_32F);
         for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < dimensions; j++) {
-                transposed.at<float>(i, j) = data[j * rows + i];
-            }
-        }
-        
-        for (int i = 0; i < transposed.rows; i++) {
-            float* row = transposed.ptr<float>(i);
-            
-            // Bbox: x, y, w, h
-            float x = row[0];
-            float y = row[1];
-            float w = row[2];
-            float h = row[3];
-            
-            // Classes: row[4] até row[83]
-            // Para pessoa (class 0), pegamos row[4]
-            float confidence = row[4];
+            int index = i;
+            float x = data[index];
+            float y = data[index + rows];
+            float w = data[index + 2 * rows];
+            float h = data[index + 3 * rows];
+            float confidence = data[index + 4 * rows];
             
             if (confidence >= confidenceThreshold) {
-                // Converte coordenadas normalizadas
-                int left = (int)((x - w/2) * frameSize.width);
-                int top = (int)((y - h/2) * frameSize.height);
-                int width = (int)(w * frameSize.width);
-                int height = (int)(h * frameSize.height);
+                int left = (int)((x - w/2) * x_factor);
+                int top = (int)((y - h/2) * y_factor);
+                int width = (int)(w * x_factor);
+                int height = (int)(h * y_factor);
                 
                 boxes.push_back(cv::Rect(left, top, width, height));
                 confidences.push_back(confidence);
-                classIds.push_back(0); // pessoa
+                classIds.push_back(0);
             }
         }
     }
     
-    // Non-Maximum Suppression
     std::vector<int> indices;
     cv::dnn::NMSBoxes(boxes, confidences, confidenceThreshold, nmsThreshold, indices);
     

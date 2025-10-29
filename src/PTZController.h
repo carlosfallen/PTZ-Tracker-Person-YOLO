@@ -29,6 +29,9 @@ private:
     
     std::unique_ptr<QSerialPort> serial;
     bool connected;
+    int lastPanSpeed;
+    int lastTiltSpeed;
+    int lastZoomSpeed;
 };
 
 #endif

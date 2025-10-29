@@ -34,7 +34,6 @@ void MainWindow::setupUI() {
     QWidget *central = new QWidget(this);
     QVBoxLayout *mainLayout = new QVBoxLayout(central);
     
-    // Controles
     QGroupBox *controlGroup = new QGroupBox("⚙ Configurações");
     QHBoxLayout *controlLayout = new QHBoxLayout(controlGroup);
     
@@ -75,9 +74,18 @@ void MainWindow::setupUI() {
     });
     controlLayout->addWidget(thresholdSpinBox);
     
+    autoTrackCheckbox = new QCheckBox("Auto PTZ");
+    connect(autoTrackCheckbox, &QCheckBox::toggled, [this](bool checked) {
+        if (captureEngine) {
+            captureEngine->setAutoTracking(checked);
+            logPanel->addLog(checked ? "Auto PTZ ativado" : "Auto PTZ desativado", 
+                           checked ? 1 : 0);
+        }
+    });
+    controlLayout->addWidget(autoTrackCheckbox);
+    
     mainLayout->addWidget(controlGroup);
     
-    // Área principal
     QSplitter *splitter = new QSplitter(Qt::Horizontal);
     
     videoWidget = new VideoWidget();
@@ -98,7 +106,6 @@ void MainWindow::setupUI() {
     
     mainLayout->addWidget(splitter, 1);
     
-    // Botões
     QHBoxLayout *buttonLayout = new QHBoxLayout();
     
     startButton = new QPushButton("▶ Iniciar Detecção");
@@ -161,6 +168,8 @@ void MainWindow::onStartClicked() {
         thresholdSpinBox->value()
     );
     
+    captureEngine->setAutoTracking(autoTrackCheckbox->isChecked());
+    
     if (comPortCombo->currentText() != "Desabilitado") {
         ptzController = std::make_unique<PTZController>(
             comPortCombo->currentText().toStdString(), 9600
@@ -173,6 +182,9 @@ void MainWindow::onStartClicked() {
                 ptzController.get(), &PTZController::zoom);
         connect(ptzPanel, &PTZPanel::homeRequested,
                 ptzController.get(), &PTZController::home);
+        
+        connect(captureEngine.get(), &CaptureEngine::ptzAdjustmentNeeded,
+                ptzController.get(), &PTZController::panTilt);
         
         logPanel->addLog("✓ PTZ conectado", 1);
     }
