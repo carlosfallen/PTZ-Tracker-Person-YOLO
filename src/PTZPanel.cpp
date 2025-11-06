@@ -46,29 +46,14 @@ PTZPanel::PTZPanel(QWidget *parent) : QWidget(parent), currentSpeed(10) {
     connect(upBtn, &QPushButton::pressed, [this]() { 
         emit panTiltRequested(0, currentSpeed); 
     });
-    connect(upBtn, &QPushButton::released, [this]() { 
-        emit panTiltRequested(0, 0); 
-    });
-
     connect(downBtn, &QPushButton::pressed, [this]() { 
         emit panTiltRequested(0, -currentSpeed); 
     });
-    connect(downBtn, &QPushButton::released, [this]() { 
-        emit panTiltRequested(0, 0); 
-    });
-
     connect(leftBtn, &QPushButton::pressed, [this]() { 
         emit panTiltRequested(-currentSpeed, 0); 
     });
-    connect(leftBtn, &QPushButton::released, [this]() { 
-        emit panTiltRequested(0, 0); 
-    });
-
     connect(rightBtn, &QPushButton::pressed, [this]() { 
         emit panTiltRequested(currentSpeed, 0); 
-    });
-    connect(rightBtn, &QPushButton::released, [this]() { 
-        emit panTiltRequested(0, 0); 
     });
     
     mainLayout->addWidget(panTiltGroup);
@@ -104,6 +89,13 @@ PTZPanel::PTZPanel(QWidget *parent) : QWidget(parent), currentSpeed(10) {
     zoomInBtn = new QPushButton("➕ IN");
     zoomOutBtn->setMinimumHeight(45);
     zoomInBtn->setMinimumHeight(45);
+    
+    connect(zoomInBtn, &QPushButton::pressed, [this]() { 
+        emit zoomRequested(5); 
+    });
+    connect(zoomOutBtn, &QPushButton::pressed, [this]() { 
+        emit zoomRequested(-5); 
+    });
     
     connect(zoomInBtn, &QPushButton::released, [this]() { 
         emit zoomRequested(0); 

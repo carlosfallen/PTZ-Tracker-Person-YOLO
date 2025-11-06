@@ -13,6 +13,7 @@
 #include <QStatusBar>
 #include <QSerialPortInfo>
 #include <QMessageBox>
+#include <QTimer>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), isRunning(false)
@@ -24,6 +25,8 @@ MainWindow::MainWindow(QWidget *parent)
     createMenuBar();
     createStatusBar();
     updateUIState(false);
+    
+    QTimer::singleShot(100, this, &MainWindow::refreshWebcams);
 }
 
 MainWindow::~MainWindow() {
@@ -37,13 +40,16 @@ void MainWindow::setupUI() {
     QGroupBox *controlGroup = new QGroupBox("⚙ Configurações");
     QHBoxLayout *controlLayout = new QHBoxLayout(controlGroup);
     
-    controlLayout->addWidget(new QLabel("Fonte:"));
-    sourceTypeCombo = new QComboBox();
-    sourceTypeCombo->addItems({"Webcam", "RTSP", "Arquivo"});
-    controlLayout->addWidget(sourceTypeCombo);
+    controlLayout->addWidget(new QLabel("Webcam:"));
+    webcamCombo = new QComboBox();
+    webcamCombo->addItem("Carregando...", -1);
+    controlLayout->addWidget(webcamCombo, 1);
     
-    sourcePathEdit = new QLineEdit("0");
-    controlLayout->addWidget(sourcePathEdit, 1);
+    QPushButton *refreshBtn = new QPushButton("🔄");
+    refreshBtn->setMaximumWidth(35);
+    refreshBtn->setToolTip("Atualizar lista de webcams");
+    connect(refreshBtn, &QPushButton::clicked, this, &MainWindow::refreshWebcams);
+    controlLayout->addWidget(refreshBtn);
     
     controlLayout->addWidget(new QLabel("PTZ:"));
     comPortCombo = new QComboBox();
@@ -69,7 +75,7 @@ void MainWindow::setupUI() {
             [this](double val) {
         if (captureEngine) {
             captureEngine->setConfidenceThreshold(val);
-            logPanel->addLog(QString("Threshold: %1").arg(val), 0);
+            if (logPanel) logPanel->addLog(QString("Threshold: %1").arg(val), 0);
         }
     });
     controlLayout->addWidget(thresholdSpinBox);
@@ -78,8 +84,10 @@ void MainWindow::setupUI() {
     connect(autoTrackCheckbox, &QCheckBox::toggled, [this](bool checked) {
         if (captureEngine) {
             captureEngine->setAutoTracking(checked);
-            logPanel->addLog(checked ? "Auto PTZ ativado" : "Auto PTZ desativado", 
-                           checked ? 1 : 0);
+            if (logPanel) {
+                logPanel->addLog(checked ? "Auto PTZ ativado" : "Auto PTZ desativado", 
+                               checked ? 1 : 0);
+            }
         }
     });
     controlLayout->addWidget(autoTrackCheckbox);
@@ -127,6 +135,66 @@ void MainWindow::setupUI() {
     logPanel->addLog("✓ Sistema YOLO iniciado", 1);
 }
 
+void MainWindow::refreshWebcams() {
+    if (!webcamCombo) return;
+    
+    webcamCombo->clear();
+    
+    logPanel->addLog("🔍 Procurando webcams...", 0);
+    
+    int foundCameras = 0;
+    
+    for (int i = 0; i < 20; i++) {
+        cv::VideoCapture cap;
+        
+        try {
+            cap.open(i, cv::CAP_ANY);
+            
+            if (cap.isOpened()) {
+                cv::Mat testFrame;
+                bool canRead = cap.read(testFrame);
+                
+                if (canRead && !testFrame.empty()) {
+                    QString cameraName;
+                    
+                    #ifdef _WIN32
+                        std::string backend = cap.getBackendName();
+                        if (!backend.empty() && backend != "FFMPEG" && backend != "GStreamer") {
+                            cameraName = QString::fromStdString(backend) + QString(" (ID: %1)").arg(i);
+                        } else {
+                            cameraName = QString("Camera %1").arg(i);
+                        }
+                    #elif __linux__
+                        cameraName = QString("/dev/video%1").arg(i);
+                    #elif __APPLE__
+                        cameraName = QString("Camera %1").arg(i);
+                    #else
+                        cameraName = QString("Camera %1").arg(i);
+                    #endif
+                    
+                    if (i >= 10) {
+                        cameraName += " (Virtual?)";
+                    }
+                    
+                    webcamCombo->addItem(cameraName, i);
+                    foundCameras++;
+                }
+                
+                cap.release();
+            }
+        } catch (...) {
+        }
+    }
+    
+    if (foundCameras == 0) {
+        webcamCombo->addItem("Nenhuma webcam detectada", -1);
+        logPanel->addLog("⚠ Nenhuma webcam encontrada", 3);
+        logPanel->addLog("Dica: Certifique-se que a webcam está conectada", 0);
+    } else {
+        logPanel->addLog(QString("✓ %1 webcam(s) encontrada(s)").arg(foundCameras), 1);
+    }
+}
+
 void MainWindow::createMenuBar() {
     QMenuBar *menuBar = new QMenuBar(this);
     
@@ -141,7 +209,8 @@ void MainWindow::createMenuBar() {
             "<p>✓ YOLOv8 ONNX<br>"
             "✓ Controle PTZ VISCA<br>"
             "✓ Interface Qt6<br>"
-            "✓ Multi-thread</p>");
+            "✓ Multi-thread<br>"
+            "✓ Suporta webcams virtuais (OBS)</p>");
     });
     
     setMenuBar(menuBar);
@@ -160,10 +229,17 @@ void MainWindow::createStatusBar() {
 void MainWindow::onStartClicked() {
     if (isRunning) return;
     
+    int cameraIndex = webcamCombo->currentData().toInt();
+    
+    if (cameraIndex < 0) {
+        QMessageBox::warning(this, "Erro", "Nenhuma webcam selecionada ou disponível!");
+        return;
+    }
+    
     logPanel->addLog("🚀 Iniciando captura com YOLO...", 1);
     
     captureEngine = std::make_unique<CaptureEngine>(
-        sourcePathEdit->text().toStdString(),
+        std::to_string(cameraIndex),
         fpsSpinBox->value(),
         thresholdSpinBox->value()
     );
@@ -182,6 +258,8 @@ void MainWindow::onStartClicked() {
                 ptzController.get(), &PTZController::zoom);
         connect(ptzPanel, &PTZPanel::homeRequested,
                 ptzController.get(), &PTZController::home);
+        connect(ptzPanel, &PTZPanel::menuRequested,
+                ptzController.get(), &PTZController::openMenu);
         
         connect(captureEngine.get(), &CaptureEngine::ptzAdjustmentNeeded,
                 ptzController.get(), &PTZController::panTilt);
@@ -238,8 +316,7 @@ void MainWindow::onDetectionCount(int count) {
 void MainWindow::updateUIState(bool running) {
     startButton->setEnabled(!running);
     stopButton->setEnabled(running);
-    sourceTypeCombo->setEnabled(!running);
-    sourcePathEdit->setEnabled(!running);
+    webcamCombo->setEnabled(!running);
     comPortCombo->setEnabled(!running);
     fpsSpinBox->setEnabled(!running);
 }

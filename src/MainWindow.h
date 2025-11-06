@@ -3,13 +3,13 @@
 
 #include <QMainWindow>
 #include <QComboBox>
-#include <QLineEdit>
 #include <QPushButton>
 #include <QSpinBox>
 #include <QDoubleSpinBox>
 #include <QCheckBox>
 #include <QLabel>
 #include <memory>
+#include <opencv2/opencv.hpp>
 
 class VideoWidget;
 class PTZPanel;
@@ -30,6 +30,7 @@ private slots:
     void onFrameReady(const QImage &frame);
     void onFPSUpdate(double fps);
     void onDetectionCount(int count);
+    void refreshWebcams();
 
 private:
     void setupUI();
@@ -41,8 +42,7 @@ private:
     PTZPanel *ptzPanel;
     LogPanel *logPanel;
     
-    QComboBox *sourceTypeCombo;
-    QLineEdit *sourcePathEdit;
+    QComboBox *webcamCombo;
     QComboBox *comPortCombo;
     QSpinBox *fpsSpinBox;
     QDoubleSpinBox *thresholdSpinBox;

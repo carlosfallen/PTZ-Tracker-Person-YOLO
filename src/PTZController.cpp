@@ -68,10 +68,10 @@ void PTZController::zoom(int speed) {
     
     if (speed > 0) {
         unsigned char spd = std::min(std::abs(speed), 7);
-        cmd.append((char)(0x20 | spd));
+        cmd.append((char)(0x20 + spd));
     } else if (speed < 0) {
         unsigned char spd = std::min(std::abs(speed), 7);
-        cmd.append((char)(0x30 | spd));
+        cmd.append((char)(0x30 + spd));
     } else {
         cmd.append((char)0x00);
     }
@@ -134,9 +134,9 @@ void PTZController::sendCommand(const QByteArray &cmd) {
     if (serial && serial->isOpen()) {
         serial->write(cmd);
         serial->flush();
-        serial->waitForBytesWritten(50);
+        serial->waitForBytesWritten(100);
         
-        QThread::msleep(30);
+        QThread::msleep(40);
         
         emit commandSent(commandToString(cmd));
     }
